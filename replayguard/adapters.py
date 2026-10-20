@@ -25,6 +25,7 @@ class ModelCfg:
     model_id: str        # id sent to the endpoint
     base_url: str
     api_key: str
+    temperature: float = 0.0
 
 
 _PY = {"string": str, "number": float}
@@ -42,7 +43,7 @@ def _langchain(g: Gateway, m: ModelCfg, system: str, user: str, max_steps: int) 
         tools.append(StructuredTool.from_function(
             func=(lambda _n: lambda **kw: g.call(_n, kw))(s.name), name=s.name, description=s.description,
             args_schema=schema))
-    llm = ChatOpenAI(model=m.model_id, base_url=m.base_url, api_key=m.api_key, temperature=0, max_retries=3)
+    llm = ChatOpenAI(model=m.model_id, base_url=m.base_url, api_key=m.api_key, temperature=m.temperature, max_retries=3)
     agent = create_agent(llm, tools, system_prompt=system)
     out = agent.invoke({"messages": [{"role": "user", "content": user}]},
                        config={"recursion_limit": 2 * max_steps + 1})
@@ -62,7 +63,7 @@ def _smolagents(g: Gateway, m: ModelCfg, system: str, user: str, max_steps: int)
             "forward": (lambda _n: lambda self, **kw: g.call(_n, kw))(s.name),
         }
         tools.append(type(f"T_{s.name}", (Tool,), attrs)())
-    model = OpenAIServerModel(model_id=m.model_id, api_base=m.base_url, api_key=m.api_key, temperature=0)
+    model = OpenAIServerModel(model_id=m.model_id, api_base=m.base_url, api_key=m.api_key, temperature=m.temperature)
     agent = ToolCallingAgent(tools=tools, model=model, max_steps=max_steps, verbosity_level=LogLevel.OFF,
                              instructions=system)
     return str(agent.run(user))
@@ -85,7 +86,7 @@ def _openai_agents(g: Gateway, m: ModelCfg, system: str, user: str, max_steps: i
     client = AsyncOpenAI(base_url=m.base_url, api_key=m.api_key, max_retries=3)
     agent = Agent(name="ops", instructions=system, tools=tools,
                   model=OpenAIChatCompletionsModel(model=m.model_id, openai_client=client),
-                  model_settings=ModelSettings(temperature=0, parallel_tool_calls=False))
+                  model_settings=ModelSettings(temperature=m.temperature, parallel_tool_calls=False))
     return str(Runner.run_sync(agent, user, max_turns=max_steps).final_output)
 
 

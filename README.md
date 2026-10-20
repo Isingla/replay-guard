@@ -32,6 +32,15 @@ export OPENAI_API_KEY=... OPENROUTER_API_KEY=...
 make bench MODELS=gpt-4.1-mini,llama-3.3-70b,qwen-2.5-72b OUT=results/real
 ```
 
+Prompt-only baseline and run-to-run variance:
+
+```bash
+# Does telling the model to check its tool results help? (no guardrail)
+python -m replayguard.runner bench --models gpt-4.1-mini --prompts default,vigilant --guards off --out results/prompt
+# Randomness on, 3 repeats per episode
+python -m replayguard.runner bench --models gpt-4.1-mini --temperature 0.7 --repeats 3 --out results/variance
+```
+
 Local open models: `ollama pull qwen2.5:7b-instruct`, then `MODELS=qwen2.5-7b-local`.
 
 ## How it works
