@@ -61,12 +61,12 @@ class TraceStore:
 
     def save(self, path: Path):
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text("".join(json.dumps(r) + "\n" for r in self.rows))
+        path.write_text("".join(json.dumps(r) + "\n" for r in self.rows), encoding="utf-8")
 
     @staticmethod
     def load(path: Path) -> "TraceStore":
         s = TraceStore()
-        for line in path.read_text().splitlines():
+        for line in path.read_text(encoding="utf-8").splitlines():
             d = json.loads(line)
             s.add(d["family"], d["kind"], BoundResult.from_json(d), d["args"])
         return s

@@ -32,7 +32,7 @@ _stub_url: str | None = None
 
 def load_models(names: list[str]) -> list[ModelCfg]:
     global _stub_url
-    presets = tomllib.loads((ROOT / "models.toml").read_text())
+    presets = tomllib.loads((ROOT / "models.toml").read_text(encoding="utf-8"))
     out = []
     for n in names:
         if n.startswith("stub-"):
@@ -103,9 +103,9 @@ def cmd_bench(a):
     rows = _pmap(lambda j: episode(j[0], j[1], j[2], pert=j[3], guard=j[4], store=store), jobs, a.workers)
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
-    (out / "episodes.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
+    (out / "episodes.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
     md = report.render(rows, title=a.title)
-    (out / "RESULTS.md").write_text(md)
+    (out / "RESULTS.md").write_text(md, encoding="utf-8")
     print(md)
 
 
@@ -127,13 +127,18 @@ def cmd_ablate(a):
         rows += rs
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
-    (out / "ablation.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
+    (out / "ablation.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
     md = report.render_ablation(rows, list(configs))
-    (out / "ABLATION.md").write_text(md)
+    (out / "ABLATION.md").write_text(md, encoding="utf-8")
     print(md)
 
 
 def main(argv=None):
+    for s in (sys.stdout, sys.stderr):
+        try:
+            s.reconfigure(encoding="utf-8")
+        except Exception:
+            pass
     ap = argparse.ArgumentParser(prog="replayguard")
     sub = ap.add_subparsers(dest="cmd", required=True)
     common = argparse.ArgumentParser(add_help=False)
