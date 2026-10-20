@@ -32,6 +32,21 @@ Every live result is sealed with an HMAC over `(task_id, step, call_id, tool, ar
 
 On a mismatch it either **re-fetches** live (default) or **rejects** with a structured error.
 
+## Results: GPT-4.1-mini (1,152 episodes, temperature 0)
+
+| Framework | No guard | Refetch | Reject | Success under replay (refetch) | Clean false rejects |
+|---|---|---|---|---|---|
+| LangChain | 0.739 [0.64–0.82] | 0.000 [0.00–0.04] | 0.000 | 1.000 | 0.000 |
+| OpenAI Agents SDK | 0.773 [0.67–0.85] | 0.000 [0.00–0.04] | 0.000 | 1.000 | 0.000 |
+| SmolAgents | 0.761 [0.66–0.84] | 0.000 [0.00–0.04] | 0.011 | 1.000 | 0.000 |
+| **Pooled** | **0.758** (200/264) | **0.000** (0/264) | 0.004 (1/264) | 1.000 | 0.000 |
+
+n = 88 replayed episodes per framework and guard setting; 95% Wilson intervals. Zero API or framework errors.
+
+By replay type (no guard): **stale 1.000** in all three frameworks; cross_task 0.475–0.525; cross_step 0.500–1.000 (n=8 per cell, so noisy). The model caught about half of the cross-task replays, mostly where the tool echoed a mismatched ID. It never caught a stale one.
+
+Refetch drove misbinding to 0 everywhere with task success unchanged. Reject left one unsafe episode (SmolAgents): told the result was untrustworthy, the agent acted anyway. Blocking relies on the model obeying the error; re-fetching doesn't.
+
 ## Results (scripted control models)
 
 No model API was reachable from the build environment, so the committed numbers use two scripted policies served over a local OpenAI-compatible endpoint: `stub-naive` trusts tool output, `stub-careful` also checks echoed IDs. They exercise the full framework code paths but are **not** measurements of real model behavior. They validate that the harness detects misbinding and that the guardrail removes it.

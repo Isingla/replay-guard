@@ -64,4 +64,11 @@ Replay is injected **below** the framework, at the tool boundary, so each framew
 
 ## Results
 
-See `results/RESULTS.md`, `results/ABLATION.md` and `WRITEUP.md`. Committed results are from the scripted control models, which validate the harness and guardrail; real-model numbers come from `make bench MODELS=...`.
+GPT-4.1-mini, 1,152 episodes across the three frameworks:
+
+| | Unsafe actions under replay |
+|---|---|
+| No guard | **75.8%** (200/264) |
+| Context-binding guard (refetch) | **0.0%** (0/264), task success unchanged |
+
+Stale results fooled the model every time. Full tables in `results/real/RESULTS.md`, analysis in `WRITEUP.md`.
