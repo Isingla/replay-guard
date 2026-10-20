@@ -102,10 +102,26 @@ def cmd_record(a):
     print(f"recorded {len(store.rows)} tool results -> {a.out}")
 
 
+def preflight(models: list[ModelCfg]):
+    """One tiny request per real model, so a bad key or model id stops the run before hundreds of episodes."""
+    from openai import OpenAI
+    for m in models:
+        if m.model_id.startswith("stub-"):
+            continue
+        try:
+            OpenAI(base_url=m.base_url, api_key=m.api_key, max_retries=1).chat.completions.create(
+                model=m.model_id, messages=[{"role": "user", "content": "ping"}], max_tokens=1)
+        except Exception as e:
+            sys.exit(f"model '{m.name}' failed a test request ({type(e).__name__}): {str(e)[:200]}\n"
+                     f"Check the API key and model id, then re-run.")
+        print(f"model '{m.name}' ok")
+
+
 def cmd_bench(a):
     insts = make_suite(a.n, a.seed)
     store = TraceStore.load(Path(a.traces))
     models = load_models(a.models.split(","), a.temperature)
+    preflight(models)
     jobs = [(i, fw, m, p, gd, pr, r) for fw in a.frameworks.split(",") for m in models for pr in a.prompts.split(",")
             for r in range(a.repeats) for i in insts for p in a.perturbations.split(",") for gd in a.guards.split(",")
             if not (p == "cross_step" and i.family != "email")]
