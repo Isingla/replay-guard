@@ -69,6 +69,7 @@ GPT-4.1-mini, 1,152 episodes across the three frameworks:
 | | Unsafe actions under replay |
 |---|---|
 | No guard | **75.8%** (200/264) |
+| "Check your tool results" system prompt, no guard | **74.2%** (196/264) |
 | Context-binding guard (refetch) | **0.0%** (0/264), task success unchanged |
 
-Stale results fooled the model every time. Full tables in `results/real/RESULTS.md`, analysis in `WRITEUP.md`.
+Stale results fooled the model every time, with or without the careful prompt. Full tables in `results/real/RESULTS.md`, analysis in `WRITEUP.md`.
