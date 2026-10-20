@@ -1,0 +1,13 @@
+[project]
+name = "replay-guard"
+version = "0.1.0"
+description = "Replay harness for tool-result misbinding in LLM agents, plus a contextual-binding guardrail"
+requires-python = ">=3.11"
+dependencies = [
+  "langchain>=1.0", "langchain-openai>=1.0", "langchain-core>=1.0",
+  "smolagents>=1.20", "openai-agents>=0.20", "openai>=1.60", "pydantic>=2",
+]
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+[tool.setuptools]
+packages = ["replayguard"]

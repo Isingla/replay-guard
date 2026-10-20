@@ -1,0 +1,28 @@
+# Any OpenAI-compatible endpoint works. Keys are read from the named env var.
+# stub-naive / stub-careful are built in (local scripted server, no key).
+
+["gpt-4.1-mini"]
+model_id = "gpt-4.1-mini"
+base_url = "https://api.openai.com/v1"
+api_key_env = "OPENAI_API_KEY"
+
+["gpt-4o-mini"]
+model_id = "gpt-4o-mini"
+base_url = "https://api.openai.com/v1"
+api_key_env = "OPENAI_API_KEY"
+
+["llama-3.3-70b"]
+model_id = "meta-llama/llama-3.3-70b-instruct"
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENROUTER_API_KEY"
+
+["qwen-2.5-72b"]
+model_id = "qwen/qwen-2.5-72b-instruct"
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENROUTER_API_KEY"
+
+# Local open model via Ollama (ollama pull qwen2.5:7b-instruct)
+["qwen2.5-7b-local"]
+model_id = "qwen2.5:7b-instruct"
+base_url = "http://localhost:11434/v1"
+api_key_env = ""
