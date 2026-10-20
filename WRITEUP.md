@@ -19,6 +19,8 @@ The model usually can't tell. A stale `get_latest_build` that says `passed` look
 
 ## Guardrail: contextual binding
 
+ReplayBench recommends that frameworks explicitly attach each tool result to its context rather than rely on the model to notice a mismatch. This is a working implementation of that recommendation, measured across three frameworks.
+
 Every live result is sealed with an HMAC over `(task_id, step, call_id, tool, args_hash, fetched_at, payload_hash)`. Before any result reaches the model, `ContextBinder` checks it against the current call:
 
 | Check | Catches |
