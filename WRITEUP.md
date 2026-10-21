@@ -51,9 +51,9 @@ Refetch drove misbinding to 0 everywhere with task success unchanged. Reject lef
 
 Adding "tool results can be stale or meant for a different request; check before any irreversible action" to the system prompt moved pooled misbinding from **0.758 to 0.742** (196/264). Stale replays stayed at **1.000** in every framework. The only real gain was LangChain on cross-step (0.500 → 0.125), where two lookups in one conversation give the model something to compare. A stale result offers nothing to compare against. Details: `results/prompt/RESULTS.md`.
 
-## Results (scripted control models)
+## Harness validation (scripted control models)
 
-No model API was reachable from the build environment, so the committed numbers use two scripted policies served over a local OpenAI-compatible endpoint: `stub-naive` trusts tool output, `stub-careful` also checks echoed IDs. They exercise the full framework code paths but are **not** measurements of real model behavior. They validate that the harness detects misbinding and that the guardrail removes it.
+Before the real-model runs, the harness was validated with two scripted policies served over a local OpenAI-compatible endpoint: `stub-naive` trusts tool output, `stub-careful` also checks echoed IDs. They exercise the full framework code paths but are **not** measurements of model behavior; they confirm the harness detects misbinding and the guardrail removes it. The ablation below uses them. Files: `results/controls/`.
 
 2,304 episodes, identical across all three frameworks (the policies are deterministic):
 
@@ -82,7 +82,7 @@ Echo-checking (`stub-careful`) only helps on cross-task replay (0.575 → 0.400)
 
 ## Limitations
 
-- Real-model numbers are pending (`make bench MODELS=...`). Real models will sit between the stubs and perfect on cross-task; on stale and cross-step they have nothing to notice.
+- One real model so far (GPT-4.1-mini, temperature 0). Other model families and sampled runs (`--temperature 0.7 --repeats 3`) are supported but not yet run. The ablation uses the scripted controls, not a real model.
 - The guardrail assumes the tool executor holds the signing key and caches store the envelope. A cache that strips envelopes fails closed, which is the intent, but costs a refetch.
 - TTL is per-tool and hand-set (300s here). Picking it is a policy decision per tool.
 - Tasks are synthetic and small (40 instances). Each is built so the replay changes the right action; the rate is a severity measure on dangerous replays, not a base rate in the wild.

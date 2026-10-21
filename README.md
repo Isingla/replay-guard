@@ -72,4 +72,21 @@ GPT-4.1-mini, 1,152 episodes across the three frameworks:
 | "Check your tool results" system prompt, no guard | **74.2%** (196/264) |
 | Context-binding guard (refetch) | **0.0%** (0/264), task success unchanged |
 
-Stale results fooled the model every time, with or without the careful prompt. Full tables in `results/real/RESULTS.md`, analysis in `WRITEUP.md`.
+Stale results fooled the model every time, with or without the careful prompt. Full tables: `results/real/RESULTS.md` (main run), `results/prompt/RESULTS.md` (prompt-only baseline), `results/controls/` (scripted-control validation and ablation). Analysis: `WRITEUP.md`.
+
+## Windows
+
+`make` isn't available by default; run the module directly, e.g.
+
+```powershell
+$env:PYTHONUTF8="1"
+.\.venv\Scripts\python.exe -m replayguard.runner bench --models gpt-4.1-mini --out results/real --workers 2
+```
+
+## Citation
+
+This builds on ReplayBench / TRAP: *Tool-result Replay Attack for Probing Misbinding in LLM Agents*, arXiv:2610.16333 (2026).
+
+## License
+
+MIT, see `LICENSE`.

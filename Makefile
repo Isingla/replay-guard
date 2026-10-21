@@ -3,7 +3,7 @@ N ?= 8
 MODELS ?= stub-naive,stub-careful
 FRAMEWORKS ?= langchain,smolagents,openai_agents
 RECORDER ?= stub-naive
-OUT ?= results
+OUT ?= results/controls
 
 .PHONY: install test traces bench ablate all
 install:
