@@ -2,7 +2,7 @@
 
 A replay harness for **tool-result misbinding** in LLM agents, and a reference guardrail that fixes it.
 
-ReplayBench (arXiv 2610.16333, Oct 2026) showed that valid-but-stale tool outputs, replayed into the wrong context, make agents take unsafe actions, and recommended that frameworks bind each result to its context. This repo implements that recommendation in LangChain, SmolAgents and the OpenAI Agents SDK, and measures it.
+ReplayBench (Zhi et al., arXiv 2610.16333, Oct 2026) showed that valid-but-stale tool outputs, replayed into the wrong context, make agents take unsafe actions, and called for explicit contextual binding in agent runtimes. The paper reports gateway defenses (call-ID binding, one-shot tickets, world-state epochs) on LlamaIndex, but that code is not in its public release. This repo is an independent, open implementation of contextual binding, tested in LangChain, SmolAgents and the OpenAI Agents SDK.
 
 ## What's here
 

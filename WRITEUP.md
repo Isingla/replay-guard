@@ -19,7 +19,7 @@ The model usually can't tell. A stale `get_latest_build` that says `passed` look
 
 ## Guardrail: contextual binding
 
-ReplayBench recommends that frameworks explicitly attach each tool result to its context rather than rely on the model to notice a mismatch. This is a working implementation of that recommendation, measured across three frameworks.
+ReplayBench calls for explicit contextual binding in agent runtimes, and reports three gateway defenses (call-ID binding, one-shot tickets, world-state epochs) evaluated with GPT-5.5 on LlamaIndex. Those implementations are not in the public release. This is an independent open implementation, measured across three other framework setups, adding signed envelopes, per-tool freshness, a prompt-only baseline, and a per-check ablation.
 
 Every live result is sealed with an HMAC over `(task_id, step, call_id, tool, args_hash, fetched_at, payload_hash)`. Before any result reaches the model, `ContextBinder` checks it against the current call:
 
